@@ -56,15 +56,7 @@ export default function AdminPanel({ onClose, theme, setTheme, ownerEmail, setOw
     }
   };
 
-  const saveSettings = () => {
-  if (!ownerEmail) {
-    alert("Please enter an email address.");
-    return;
-  }
-
-  window.localStorage.setItem("travelform_owner_email", ownerEmail);
-  alert("Settings saved.");
-};
+  const saveSettings = () => { if (!ownerEmail) { alert("Please enter an email address."); return; } localStorage.setItem("travelform_owner_email", ownerEmail); localStorage.setItem("travelform_theme", JSON.stringify(theme)); alert("Settings saved."); };
 
   if (!isAuthenticated) {
     return (
