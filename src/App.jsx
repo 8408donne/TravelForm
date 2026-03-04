@@ -209,32 +209,44 @@ export default function App() {
     if (!ownerEmail) { alert("This form is not configured yet. Please set your email in the admin panel."); return; 
     }
 
-    const payload = { ...form, ownerEmail };
+    const payload = { 
+      ...form, 
+      ownerEmail,
+      childrensAges: form.childrenAges,
+      nights: calculateNights()
+    };
   
-    const res = await fetch("https://travelform-backend.vercel.app/api/send-enquiry", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(payload)
-    });
-
-    if (res.ok) {
-      alert("Thank you — your enquiry has been sent.");
-      setForm({
-        name: "",
-        email: "",
-        departureAirport: "",
-        allowNearbyAirports: false,
-        destination: "",
-        adults: 1,
-        children: 0,
-        childrenAges: [],
-        dateFrom: "",
-        dateTo: "",
-        budget: "",
-        notes: ""
+    try {
+      const res = await fetch("/api/send-enquiry", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload)
       });
-    } else {
-      alert("There was an error sending your enquiry. Please try again.");
+
+      if (res.ok) {
+        alert("Thank you — your enquiry has been sent.");
+        setForm({
+          name: "",
+          email: "",
+          departureAirport: "",
+          allowNearbyAirports: false,
+          destination: "",
+          adults: 1,
+          children: 0,
+          childrenAges: [],
+          dateFrom: "",
+          dateTo: "",
+          budget: "",
+          notes: ""
+        });
+      } else {
+        const errorData = await res.json().catch(() => ({}));
+        console.error("Error response:", res.status, errorData);
+        alert(`Error: ${errorData.error || "There was an error sending your enquiry. Please try again."}`);
+      }
+    } catch (error) {
+      console.error("Network error:", error);
+      alert("Network error: Unable to connect to the server. Please check your connection and try again.");
     }
   };
 
