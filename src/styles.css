@@ -7,32 +7,17 @@ body, html, #root { height: 100%; margin: 0; }
 
 .page {
   min-height: 100vh;
-  background-size: cover;
-  background-position: center top;
-  background-repeat: no-repeat;
-  background-attachment: fixed;
+  background: #f3f4f6;
   position: relative;
   display: flex;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
   padding: 2rem;
   font-family: var(--font, "Segoe UI", system-ui, -apple-system, sans-serif);
-}
-
-.overlay {
-  position: absolute;
-  inset: 0;
-  z-index: 0;
-}
-
-.card {
-  position: relative;
-  z-index: 2;
   max-width: 520px;
+  margin: 0 auto;
   width: 100%;
-  border-radius: 16px;
-  padding: 2rem;
-  box-shadow: 0 18px 45px rgba(0,0,0,0.25);
 }
 
 .logo { max-height: 48px; margin-bottom: 8px; }
@@ -286,10 +271,10 @@ body, html, #root { height: 100%; margin: 0; }
 /* Mobile Responsive Styles */
 @media (max-width: 768px) {
   .page {
-    padding: 0;
-    background-attachment: scroll;
-    align-items: flex-end;
+    padding: 1rem;
+    align-items: stretch;
     padding-bottom: 0;
+    max-width: 100%;
   }
 
   .card {
@@ -377,7 +362,7 @@ body, html, #root { height: 100%; margin: 0; }
   }
 
   .form input, .form textarea {
-    font-size: 16px; /* Prevents zoom on iOS */
+    font-size: 0.9rem;
   }
 
   .calendar-popup {

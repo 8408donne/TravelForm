@@ -1,0 +1,40 @@
+export const UK_AIRPORTS = [
+  { code: "LHR", name: "Heathrow Airport", city: "London", country: "UK" },
+  { code: "LGW", name: "Gatwick Airport", city: "London", country: "UK" },
+  { code: "STN", name: "Stansted Airport", city: "London", country: "UK" },
+  { code: "LCY", name: "City Airport", city: "London", country: "UK" },
+  { code: "LTN", name: "Luton Airport", city: "Luton", country: "UK" },
+  { code: "SEN", name: "Southend Airport", city: "Southend-on-Sea", country: "UK" },
+  { code: "BHX", name: "Birmingham Airport", city: "Birmingham", country: "UK" },
+  { code: "MAN", name: "Manchester Airport", city: "Manchester", country: "UK" },
+  { code: "LPL", name: "Liverpool John Lennon Airport", city: "Liverpool", country: "UK" },
+  { code: "EDI", name: "Edinburgh Airport", city: "Edinburgh", country: "UK" },
+  { code: "GLA", name: "Glasgow Airport", city: "Glasgow", country: "UK" },
+  { code: "STY", name: "Prestwick Airport", city: "Prestwick", country: "UK" },
+  { code: "BFS", name: "Belfast International Airport", city: "Belfast", country: "UK" },
+  { code: "GNF", name: "Belfast George Best Airport", city: "Belfast", country: "UK" },
+  { code: "DUB", name: "Dublin Airport", city: "Dublin", country: "Ireland" },
+  { code: "CWL", name: "Cardiff Airport", city: "Cardiff", country: "UK" },
+  { code: "BRS", name: "Bristol Airport", city: "Bristol", country: "UK" },
+  { code: "EMA", name: "East Midlands Airport", city: "Nottingham", country: "UK" },
+  { code: "NCL", name: "Newcastle International Airport", city: "Newcastle", country: "UK" },
+  { code: "NQY", name: "Newquay Airport", city: "Newquay", country: "UK" },
+  { code: "PLH", name: "Plymouth Airport", city: "Plymouth", country: "UK" },
+  { code: "EXT", name: "Exeter Airport", city: "Exeter", country: "UK" },
+  { code: "SOU", name: "Southampton Airport", city: "Southampton", country: "UK" },
+  { code: "BQH", name: "Bournemouth Airport", city: "Bournemouth", country: "UK" },
+  { code: "ACI", name: "Alderney Airport", city: "Alderney", country: "UK" },
+  { code: "GCI", name: "Guernsey Airport", city: "Guernsey", country: "UK" },
+  { code: "JSY", name: "Jersey Airport", city: "Jersey", country: "UK" },
+  { code: "BOH", name: "Bournemouth Airport", city: "Bournemouth", country: "UK" },
+  { code: "LAM", name: "Lamidh Airport", city: "Isle of Man", country: "UK" }
+];
+
+export const DESTINATIONS = [
+  "Spain", "Greece", "Italy", "France", "Portugal", "Turkey", "Cyprus", "Croatia", "Malta", "Bulgaria",
+  "Canary Islands", "Balearic Islands", "Greek Islands", "Algarve", "Costa del Sol", "Costa Brava",
+  "Amalfi Coast", "French Riviera", "Dalmatian Coast", "Alicante", "Barcelona", "Madrid", "Seville",
+  "Rome", "Venice", "Florence", "Paris", "Nice", "Athens", "Santorini", "Mykonos", "Crete", "Rhodes",
+  "Corfu", "Lisbon", "Porto", "Istanbul", "Antalya", "Bodrum", "Dubrovnik", "Split", "Valletta",
+  "Ibiza", "Majorca", "Menorca", "Tenerife", "Gran Canaria", "Lanzarote", "Fuerteventura"
+];
