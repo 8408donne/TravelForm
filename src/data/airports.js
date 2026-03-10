@@ -27,7 +27,21 @@ export const UK_AIRPORTS = [
   { code: "GCI", name: "Guernsey Airport", city: "Guernsey", country: "UK" },
   { code: "JSY", name: "Jersey Airport", city: "Jersey", country: "UK" },
   { code: "BOH", name: "Bournemouth Airport", city: "Bournemouth", country: "UK" },
-  { code: "LAM", name: "Lamidh Airport", city: "Isle of Man", country: "UK" }
+  { code: "LAM", name: "Lamidh Airport", city: "Isle of Man", country: "UK" },
+  { code: "ABZ", name: "Aberdeen Airport", city: "Aberdeen", country: "UK" },
+{ code: "BHD", name: "Belfast City Airport", city: "Belfast", country: "UK" },
+{ code: "BLK", name: "Blackpool Airport", city: "Blackpool", country: "UK" }, // limited seasonal flights
+{ code: "CAX", name: "Carlisle Lake District Airport", city: "Carlisle", country: "UK" }, // seasonal
+{ code: "HUY", name: "Humberside Airport", city: "Kirmington", country: "UK" },
+{ code: "INV", name: "Inverness Airport", city: "Inverness", country: "UK" },
+{ code: "IOM", name: "Isle of Man Airport", city: "Isle of Man", country: "UK" },
+{ code: "KOI", name: "Kirkwall Airport", city: "Kirkwall", country: "UK" },
+{ code: "LBA", name: "Leeds Bradford Airport", city: "Leeds/Bradford", country: "UK" },
+{ code: "LDY", name: "City of Derry Airport", city: "Derry", country: "UK" },
+{ code: "MME", name: "Teesside International Airport", city: "Durham/Teesside", country: "UK" },
+{ code: "PIK", name: "Glasgow Prestwick Airport", city: "Prestwick", country: "UK" },
+{ code: "SYY", name: "Stornoway Airport", city: "Stornoway", country: "UK" },
+{ code: "WIC", name: "Wick John O’Groats Airport", city: "Wick", country: "UK" }
 ];
 
 export const DESTINATIONS = [

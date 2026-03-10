@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import AdminPanel from "./admin/AdminPanel";
-import { UK_AIRPORTS, DESTINATIONS } from "./data/airports";
+import { UK_AIRPORTS } from "./data/airports";
+import { DESTINATIONS } from "./data/destinations";
 
 export default function App() {
   const [theme, setTheme] = useState(() => {
@@ -20,6 +21,7 @@ export default function App() {
   const [form, setForm] = useState({
     name: "",
     email: "",
+    phone: "",
     departureAirport: "",
     allowNearbyAirports: false,
     destination: "",
@@ -70,10 +72,22 @@ export default function App() {
       }
     } else if (name === "destination") {
       setForm((p) => ({ ...p, [name]: value }));
-      if (value.length >= 3) {
-        const filtered = DESTINATIONS.filter((dest) =>
-          dest.toUpperCase().includes(value.toUpperCase())
-        );
+      if (value.length >= 2) {
+        const query = value.toUpperCase();
+        
+        // Filter destinations: prioritize starts-with matches
+        const startsWithCity = DESTINATIONS.filter(d => d.city.toUpperCase().startsWith(query));
+        const startsWithRegion = DESTINATIONS.filter(d => d.region.toUpperCase().startsWith(query));
+        const containsCity = DESTINATIONS.filter(d => d.city.toUpperCase().includes(query) && !d.city.toUpperCase().startsWith(query));
+        const containsRegion = DESTINATIONS.filter(d => d.region.toUpperCase().includes(query) && !d.region.toUpperCase().startsWith(query));
+        
+        // Combine and remove duplicates
+        const filtered = [...startsWithCity, ...startsWithRegion, ...containsCity, ...containsRegion]
+          .filter((dest, index, self) => 
+            index === self.findIndex(d => d.city === dest.city && d.region === dest.region)
+          )
+          .slice(0, 10); // Limit to 10 results
+        
         setDestinationSuggestions(filtered);
       } else {
         setDestinationSuggestions([]);
@@ -90,8 +104,12 @@ export default function App() {
     setAirportSuggestions([]);
   };
 
-  const handleDestinationSelect = (destination) => {
-    setForm((p) => ({ ...p, destination }));
+  const handleDestinationSelect = (dest) => {
+    // If city and region are the same, only show city and country
+    const displayText = dest.city === dest.region 
+      ? `${dest.city}, ${dest.country}` 
+      : `${dest.city}, ${dest.region}, ${dest.country}`;
+    setForm((p) => ({ ...p, destination: displayText }));
     setDestinationSuggestions([]);
   };
 
@@ -156,6 +174,12 @@ export default function App() {
   const submit = async (e) => {
     e.preventDefault();
 
+    // Validate that at least email or phone is provided
+    if (!form.email && !form.phone) {
+      alert("Please provide either an email address or phone number.");
+      return;
+    }
+
     if (!ownerEmail) { alert("This form is not configured yet. Please set your email in the admin panel."); return; 
     }
 
@@ -178,6 +202,7 @@ export default function App() {
         setForm({
           name: "",
           email: "",
+          phone: "",
           departureAirport: "",
           allowNearbyAirports: false,
           destination: "",
@@ -216,7 +241,10 @@ export default function App() {
           <input name="name" value={form.name} onChange={handleChange} required placeholder="Jane Smith" />
 
           <label>Email</label>
-          <input type="email" name="email" value={form.email} onChange={handleChange} required placeholder="you@example.com" />
+          <input type="email" name="email" value={form.email} onChange={handleChange} placeholder="you@example.com" />
+
+          <label>Phone number</label>
+          <input type="tel" name="phone" value={form.phone} onChange={handleChange} placeholder="07123 456789" />
 
           <label>Departure airport</label>
           <div className="airport-wrapper">
@@ -224,6 +252,7 @@ export default function App() {
               name="departureAirport"
               value={form.departureAirport}
               onChange={handleChange}
+              required
               placeholder="e.g. London LHR (min 3 chars)"
             />
             {airportSuggestions.length > 0 && (
@@ -258,17 +287,22 @@ export default function App() {
               name="destination"
               value={form.destination}
               onChange={handleChange}
+              required
               placeholder="e.g. Greek islands (min 3 chars)"
             />
             {destinationSuggestions.length > 0 && (
               <div className="airport-suggestions">
-                {destinationSuggestions.map((dest) => (
+                {destinationSuggestions.map((dest, idx) => (
                   <div
-                    key={dest}
+                    key={`${dest.city}-${dest.region}-${idx}`}
                     className="airport-item"
                     onClick={() => handleDestinationSelect(dest)}
                   >
-                    {dest}
+                    {dest.city === dest.region ? (
+                      <><strong>{dest.city}</strong>, {dest.country}</>
+                    ) : (
+                      <><strong>{dest.city}</strong>, {dest.region}, {dest.country}</>
+                    )}
                   </div>
                 ))}
               </div>
@@ -371,7 +405,7 @@ export default function App() {
           </div>
 
           <label>Approximate budget</label>
-          <input name="budget" value={form.budget} onChange={handleChange} placeholder="e.g. £1,500 total" />
+          <input name="budget" value={form.budget} onChange={handleChange} required placeholder="e.g. £1,500 total" />
 
           <label>Anything else we should know?</label>
           <textarea name="notes" value={form.notes} onChange={handleChange} rows="4" placeholder="Holiday type, excursion, park tickets, must‑haves..." />

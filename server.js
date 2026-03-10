@@ -139,7 +139,8 @@ app.post("/api/send-enquiry", async (req, res) => {
         const html = `
           <h2>New Travel Enquiry</h2>
           <p><strong>Name:</strong> ${escapeHtml(enquiry.name)}</p>
-          <p><strong>From:</strong> ${escapeHtml(enquiry.email)}</p>
+          <p><strong>Email:</strong> ${escapeHtml(enquiry.email)}</p>
+          <p><strong>Phone:</strong> ${escapeHtml(enquiry.phone || "")}</p>
           <p><strong>Departure Airport:</strong> ${escapeHtml(enquiry.departureAirport || "")}</p>
           <p><strong>Allow Nearby Airports:</strong> ${enquiry.allowNearbyAirports ? "Yes" : "No"}</p>
           <p><strong>Destination:</strong> ${escapeHtml(enquiry.destination || "")}</p>
