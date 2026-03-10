@@ -7,9 +7,8 @@ export default defineConfig({
   server: {
     proxy: {
       '/api': {
-        target: 'https://travelform-backend.vercel.app',
-        changeOrigin: true,
-        secure: true
+        target: 'http://localhost:3001',
+        changeOrigin: true
       }
     }
   }

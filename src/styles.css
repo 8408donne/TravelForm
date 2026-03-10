@@ -8,7 +8,9 @@ body, html, #root { height: 100%; margin: 0; }
 .page {
   min-height: 100vh;
   background-size: cover;
-  background-position: center;
+  background-position: center top;
+  background-repeat: no-repeat;
+  background-attachment: fixed;
   position: relative;
   display: flex;
   align-items: center;
@@ -279,4 +281,111 @@ body, html, #root { height: 100%; margin: 0; }
   font-weight: 700;
   line-height: 1;
   color: #111827;
+}
+
+/* Mobile Responsive Styles */
+@media (max-width: 768px) {
+  .page {
+    padding: 0;
+    background-attachment: scroll;
+    align-items: flex-end;
+    padding-bottom: 0;
+  }
+
+  .card {
+    padding: 1rem 1.25rem;
+    max-width: 100%;
+    width: 100%;
+    max-height: 50vh;
+    overflow-y: auto;
+    border-radius: 16px 16px 0 0;
+    background: rgba(255, 255, 255, 0.98) !important;
+  }
+
+  .logo {
+    max-height: 36px;
+  }
+
+  .title {
+    font-size: 1.3rem;
+    margin-bottom: 3px;
+  }
+
+  .subtitle {
+    font-size: 0.8rem;
+    margin-bottom: 10px;
+  }
+
+  .form {
+    gap: 7px;
+  }
+
+  .form label {
+    font-size: 0.8rem;
+    margin-bottom: 2px;
+  }
+
+  .form input, .form textarea {
+    padding: 6px 8px;
+    font-size: 0.9rem;
+  }
+
+  .button {
+    padding: 9px 14px;
+  }
+
+  .row {
+    flex-direction: column;
+    gap: 7px;
+  }
+
+  .ages-row input {
+    min-width: 90px;
+  }
+
+  .date-range-container {
+    position: static;
+  }
+
+  .calendar-popup {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 300px;
+    margin-top: 0;
+  }
+
+  .panel {
+    position: fixed;
+    inset: 0;
+    width: 100%;
+    max-height: 100vh;
+    border-radius: 0;
+    top: 0;
+    right: 0;
+  }
+}
+
+@media (max-width: 480px) {
+  .card {
+    padding: 1.25rem;
+  }
+
+  .title {
+    font-size: 1.3rem;
+  }
+
+  .form input, .form textarea {
+    font-size: 16px; /* Prevents zoom on iOS */
+  }
+
+  .calendar-popup {
+    width: 260px;
+  }
+
+  .calendar-day {
+    padding: 6px;
+    font-size: 0.85rem;
+  }
 }

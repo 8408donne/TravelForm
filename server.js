@@ -141,6 +141,7 @@ app.post("/api/send-enquiry", async (req, res) => {
           <p><strong>Name:</strong> ${escapeHtml(enquiry.name)}</p>
           <p><strong>From:</strong> ${escapeHtml(enquiry.email)}</p>
           <p><strong>Departure Airport:</strong> ${escapeHtml(enquiry.departureAirport || "")}</p>
+          <p><strong>Allow Nearby Airports:</strong> ${enquiry.allowNearbyAirports ? "Yes" : "No"}</p>
           <p><strong>Destination:</strong> ${escapeHtml(enquiry.destination || "")}</p>
           <p><strong>Dates:</strong> ${escapeHtml(enquiry.dateFrom || "")} to ${escapeHtml(enquiry.dateTo || "")}</p>
           <p><strong>Adults:</strong> ${enquiry.adults || ""}, <strong>Children:</strong> ${enquiry.children || ""}</p>
@@ -152,13 +153,14 @@ app.post("/api/send-enquiry", async (req, res) => {
         const result = await resend.emails.send({
           from: process.env.FROM_EMAIL || "noreply@resend.dev",
           to: ownerEmail,
+          replyTo: enquiry.email,
           subject: `New TravelForm Enquiry from ${enquiry.name}`,
           html
         });
 
         console.log("✓ Email sent to:", ownerEmail, "response:", JSON.stringify(result));
       } catch (emailErr) {
-        console.log("ℹ Email send failed (enquiry saved):", emailErr);
+        console.log("ℹ Email send failed (enquiry saved locally):", emailErr.message || emailErr);
       }
     } else {
       console.log("ℹ No owner email configured or Resend not set up");

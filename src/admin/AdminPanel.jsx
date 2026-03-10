@@ -56,7 +56,29 @@ export default function AdminPanel({ onClose, theme, setTheme, ownerEmail, setOw
     }
   };
 
-  const saveSettings = () => { if (!ownerEmail) { alert("Please enter an email address."); return; } localStorage.setItem("travelform_owner_email", ownerEmail); localStorage.setItem("travelform_theme", JSON.stringify(theme)); alert("Settings saved."); };
+  const saveSettings = async () => {
+    if (!ownerEmail) {
+      alert("Please enter an email address.");
+      return;
+    }
+    
+    try {
+      // Save to backend
+      await fetch("/api/admin/save-settings", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ theme, ownerEmail })
+      });
+      
+      // Also save to localStorage for quick access
+      localStorage.setItem("travelform_owner_email", ownerEmail);
+      localStorage.setItem("travelform_theme", JSON.stringify(theme));
+      
+      alert("Settings saved.");
+    } catch (error) {
+      alert("Error saving settings. Please try again.");
+    }
+  };
 
   if (!isAuthenticated) {
     return (
