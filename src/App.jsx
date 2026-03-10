@@ -1,7 +1,11 @@
 import React, { useEffect, useState } from "react";
 import AdminPanel from "./admin/AdminPanel";
 import { UK_AIRPORTS } from "./data/airports";
+import { WORLD_AIRPORTS } from "./data/worldAirports";
 import { DESTINATIONS } from "./data/destinations";
+import { CRUISE_PORTS } from "./data/cruisePorts";
+import { CRUISE_LINERS } from "./data/cruiseLiners";
+import { CRUISE_SHIPS, ROOM_TYPES } from "./data/cruiseShips";
 
 export default function App() {
   const [theme, setTheme] = useState(() => {
@@ -19,12 +23,21 @@ export default function App() {
   const [showAdminDot] = useState(true);
 
   const [form, setForm] = useState({
+    bookingType: "holidays",
     name: "",
     email: "",
     phone: "",
     departureAirport: "",
+    arrivalAirport: "",
     allowNearbyAirports: false,
     destination: "",
+    boardBasis: "",
+    departurePort: "",
+    cruiseLiner: "",
+    ship: "",
+    sailingDate: "",
+    cruiseLength: "",
+    roomType: "",
     adults: 1,
     children: 0,
     childrenAges: [],
@@ -35,7 +48,9 @@ export default function App() {
   });
 
   const [airportSuggestions, setAirportSuggestions] = useState([]);
+  const [arrivalSuggestions, setArrivalSuggestions] = useState([]);
   const [destinationSuggestions, setDestinationSuggestions] = useState([]);
+  const [portSuggestions, setPortSuggestions] = useState([]);
   const [showCalendar, setShowCalendar] = useState(false);
   const [calendarMonth, setCalendarMonth] = useState(new Date());
 
@@ -60,7 +75,7 @@ export default function App() {
       setForm((p) => ({ ...p, [name]: numChildren, childrenAges: ages }));
     } else if (name === "departureAirport") {
       setForm((p) => ({ ...p, [name]: value }));
-      if (value.length >= 3) {
+      if (value.length >= 2) {
         const filtered = UK_AIRPORTS.filter((airport) =>
           airport.code.toUpperCase().includes(value.toUpperCase()) ||
           airport.city.toUpperCase().includes(value.toUpperCase()) ||
@@ -69,6 +84,29 @@ export default function App() {
         setAirportSuggestions(filtered);
       } else {
         setAirportSuggestions([]);
+      }
+    } else if (name === "arrivalAirport") {
+      setForm((p) => ({ ...p, [name]: value }));
+      if (value.length >= 2) {
+        const filtered = WORLD_AIRPORTS.filter((airport) =>
+          airport.code.toUpperCase().includes(value.toUpperCase()) ||
+          airport.city.toUpperCase().includes(value.toUpperCase()) ||
+          airport.name.toUpperCase().includes(value.toUpperCase())
+        );
+        setArrivalSuggestions(filtered);
+      } else {
+        setArrivalSuggestions([]);
+      }
+    } else if (name === "departurePort") {
+      setForm((p) => ({ ...p, [name]: value }));
+      if (value.length >= 2) {
+        const filtered = CRUISE_PORTS.filter((port) =>
+          port.name.toUpperCase().includes(value.toUpperCase()) ||
+          port.country.toUpperCase().includes(value.toUpperCase())
+        );
+        setPortSuggestions(filtered);
+      } else {
+        setPortSuggestions([]);
       }
     } else if (name === "destination") {
       setForm((p) => ({ ...p, [name]: value }));
@@ -102,6 +140,16 @@ export default function App() {
   const handleAirportSelect = (airport) => {
     setForm((p) => ({ ...p, departureAirport: `${airport.name}, ${airport.city} (${airport.code})` }));
     setAirportSuggestions([]);
+  };
+
+  const handleArrivalSelect = (airport) => {
+    setForm((p) => ({ ...p, arrivalAirport: `${airport.name}, ${airport.city} (${airport.code})` }));
+    setArrivalSuggestions([]);
+  };
+
+  const handlePortSelect = (port) => {
+    setForm((p) => ({ ...p, departurePort: `${port.name}, ${port.country}` }));
+    setPortSuggestions([]);
   };
 
   const handleDestinationSelect = (dest) => {
@@ -200,12 +248,21 @@ export default function App() {
       if (res.ok) {
         alert("Thank you — your enquiry has been sent.");
         setForm({
+          bookingType: "holidays",
           name: "",
           email: "",
           phone: "",
           departureAirport: "",
+          arrivalAirport: "",
           allowNearbyAirports: false,
           destination: "",
+          boardBasis: "",
+          departurePort: "",
+          cruiseLiner: "",
+          ship: "",
+          sailingDate: "",
+          cruiseLength: "",
+          roomType: "",
           adults: 1,
           children: 0,
           childrenAges: [],
@@ -246,68 +303,275 @@ export default function App() {
           <label>Phone number</label>
           <input type="tel" name="phone" value={form.phone} onChange={handleChange} placeholder="07123 456789" />
 
-          <label>Departure airport</label>
-          <div className="airport-wrapper">
-            <input
-              name="departureAirport"
-              value={form.departureAirport}
-              onChange={handleChange}
-              required
-              placeholder="e.g. London LHR (min 3 chars)"
-            />
-            {airportSuggestions.length > 0 && (
-              <div className="airport-suggestions">
-                {airportSuggestions.map((airport) => (
-                  <div
-                    key={airport.code}
-                    className="airport-item"
-                    onClick={() => handleAirportSelect(airport)}
-                  >
-                    <strong>{airport.code}</strong> - {airport.name}, {airport.city}, {airport.country}
-                  </div>
-                ))}
-              </div>
-            )}
-          </div>
-          <div style={{ marginTop: "8px" }}>
-            <label style={{ display: "flex", alignItems: "center", fontWeight: "normal", gap: "8px" }}>
+          <label>Booking type</label>
+          <div style={{ display: "flex", gap: "16px", flexWrap: "wrap", marginBottom: "8px" }}>
+            <label style={{ display: "flex", alignItems: "center", fontWeight: "normal", gap: "6px" }}>
               <input
-                type="checkbox"
-                name="allowNearbyAirports"
-                checked={form.allowNearbyAirports}
+                type="radio"
+                name="bookingType"
+                value="holidays"
+                checked={form.bookingType === "holidays"}
                 onChange={handleChange}
               />
-              Allow nearby airports
+              Holidays
+            </label>
+            <label style={{ display: "flex", alignItems: "center", fontWeight: "normal", gap: "6px" }}>
+              <input
+                type="radio"
+                name="bookingType"
+                value="flights"
+                checked={form.bookingType === "flights"}
+                onChange={handleChange}
+              />
+              Flights
+            </label>
+            <label style={{ display: "flex", alignItems: "center", fontWeight: "normal", gap: "6px" }}>
+              <input
+                type="radio"
+                name="bookingType"
+                value="cruise"
+                checked={form.bookingType === "cruise"}
+                onChange={handleChange}
+              />
+              Cruise
+            </label>
+            <label style={{ display: "flex", alignItems: "center", fontWeight: "normal", gap: "6px" }}>
+              <input
+                type="radio"
+                name="bookingType"
+                value="events"
+                checked={form.bookingType === "events"}
+                onChange={handleChange}
+              />
+              Events
             </label>
           </div>
 
-          <label>Destination</label>
-          <div className="airport-wrapper">
-            <input
-              name="destination"
-              value={form.destination}
-              onChange={handleChange}
-              required
-              placeholder="e.g. Greek islands (min 3 chars)"
-            />
-            {destinationSuggestions.length > 0 && (
-              <div className="airport-suggestions">
-                {destinationSuggestions.map((dest, idx) => (
-                  <div
-                    key={`${dest.city}-${dest.region}-${idx}`}
-                    className="airport-item"
-                    onClick={() => handleDestinationSelect(dest)}
-                  >
-                    {dest.city === dest.region ? (
-                      <><strong>{dest.city}</strong>, {dest.country}</>
-                    ) : (
-                      <><strong>{dest.city}</strong>, {dest.region}, {dest.country}</>
-                    )}
+          {form.bookingType === "holidays" && (
+            <>
+              <label>Departure airport</label>
+              <div className="airport-wrapper">
+                <input
+                  name="departureAirport"
+                  value={form.departureAirport}
+                  onChange={handleChange}
+                  required
+                  placeholder="e.g. London LHR (min 2 chars)"
+                />
+                {airportSuggestions.length > 0 && (
+                  <div className="airport-suggestions">
+                    {airportSuggestions.map((airport) => (
+                      <div
+                        key={airport.code}
+                        className="airport-item"
+                        onClick={() => handleAirportSelect(airport)}
+                      >
+                        <strong>{airport.code}</strong> - {airport.name}, {airport.city}, {airport.country}
+                      </div>
+                    ))}
                   </div>
-                ))}
+                )}
               </div>
-            )}
-          </div>
+              <div style={{ marginTop: "8px" }}>
+                <label style={{ display: "flex", alignItems: "center", fontWeight: "normal", gap: "8px" }}>
+                  <input
+                    type="checkbox"
+                    name="allowNearbyAirports"
+                    checked={form.allowNearbyAirports}
+                    onChange={handleChange}
+                  />
+                  Allow nearby airports
+                </label>
+              </div>
+
+              <label>Destination</label>
+              <div className="airport-wrapper">
+                <input
+                  name="destination"
+                  value={form.destination}
+                  onChange={handleChange}
+                  required
+                  placeholder="e.g. Greek islands (min 2 chars)"
+                />
+                {destinationSuggestions.length > 0 && (
+                  <div className="airport-suggestions">
+                    {destinationSuggestions.map((dest, idx) => (
+                      <div
+                        key={`${dest.city}-${dest.region}-${idx}`}
+                        className="airport-item"
+                        onClick={() => handleDestinationSelect(dest)}
+                      >
+                        {dest.city === dest.region ? (
+                          <><strong>{dest.city}</strong>, {dest.country}</>
+                        ) : (
+                          <><strong>{dest.city}</strong>, {dest.region}, {dest.country}</>
+                        )}
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+
+              <label>Board basis</label>
+              <select name="boardBasis" value={form.boardBasis} onChange={handleChange} required>
+                <option value="">Select board basis</option>
+                <option value="Room Only">Room Only</option>
+                <option value="Bed & Breakfast">Bed & Breakfast</option>
+                <option value="Half Board">Half Board</option>
+                <option value="Full Board">Full Board</option>
+                <option value="All Inclusive">All Inclusive</option>
+              </select>
+            </>
+          )}
+
+          {form.bookingType === "flights" && (
+            <>
+              <label>Departure airport</label>
+              <div className="airport-wrapper">
+                <input
+                  name="departureAirport"
+                  value={form.departureAirport}
+                  onChange={handleChange}
+                  required
+                  placeholder="e.g. London LHR (min 2 chars)"
+                />
+                {airportSuggestions.length > 0 && (
+                  <div className="airport-suggestions">
+                    {airportSuggestions.map((airport) => (
+                      <div
+                        key={airport.code}
+                        className="airport-item"
+                        onClick={() => handleAirportSelect(airport)}
+                      >
+                        <strong>{airport.code}</strong> - {airport.name}, {airport.city}, {airport.country}
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+
+              <label>Arrival airport</label>
+              <div className="airport-wrapper">
+                <input
+                  name="arrivalAirport"
+                  value={form.arrivalAirport}
+                  onChange={handleChange}
+                  required
+                  placeholder="e.g. New York JFK (min 2 chars)"
+                />
+                {arrivalSuggestions.length > 0 && (
+                  <div className="airport-suggestions">
+                    {arrivalSuggestions.map((airport) => (
+                      <div
+                        key={airport.code}
+                        className="airport-item"
+                        onClick={() => handleArrivalSelect(airport)}
+                      >
+                        <strong>{airport.code}</strong> - {airport.name}, {airport.city}, {airport.country}
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+            </>
+          )}
+
+          {form.bookingType === "cruise" && (
+            <>
+              <label>Destination</label>
+              <div className="airport-wrapper">
+                <input
+                  name="destination"
+                  value={form.destination}
+                  onChange={handleChange}
+                  required
+                  placeholder="e.g. Mediterranean (min 2 chars)"
+                />
+                {destinationSuggestions.length > 0 && (
+                  <div className="airport-suggestions">
+                    {destinationSuggestions.map((dest, idx) => (
+                      <div
+                        key={`${dest.city}-${dest.region}-${idx}`}
+                        className="airport-item"
+                        onClick={() => handleDestinationSelect(dest)}
+                      >
+                        {dest.city === dest.region ? (
+                          <><strong>{dest.city}</strong>, {dest.country}</>
+                        ) : (
+                          <><strong>{dest.city}</strong>, {dest.region}, {dest.country}</>
+                        )}
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+
+              <label>Departure port</label>
+              <div className="airport-wrapper">
+                <input
+                  name="departurePort"
+                  value={form.departurePort}
+                  onChange={handleChange}
+                  required
+                  placeholder="e.g. Southampton (min 2 chars)"
+                />
+                {portSuggestions.length > 0 && (
+                  <div className="airport-suggestions">
+                    {portSuggestions.map((port, idx) => (
+                      <div
+                        key={idx}
+                        className="airport-item"
+                        onClick={() => handlePortSelect(port)}
+                      >
+                        <strong>{port.name}</strong>, {port.country}
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+
+              <label>Cruise liner</label>
+              <select name="cruiseLiner" value={form.cruiseLiner} onChange={handleChange} required>
+                <option value="">Select cruise liner</option>
+                <option value="Any">Any</option>
+                {CRUISE_LINERS.map((liner) => (
+                  <option key={liner} value={liner}>{liner}</option>
+                ))}
+              </select>
+
+              <label>Ship</label>
+              <select name="ship" value={form.ship} onChange={handleChange} required>
+                <option value="">Select ship</option>
+                <option value="Any">Any</option>
+                {form.cruiseLiner && form.cruiseLiner !== "Any" && CRUISE_SHIPS[form.cruiseLiner] && CRUISE_SHIPS[form.cruiseLiner].map((ship) => (
+                  <option key={ship} value={ship}>{ship}</option>
+                ))}
+              </select>
+
+              <label>Sailing date</label>
+              <input name="sailingDate" value={form.sailingDate} onChange={handleChange} required placeholder="e.g. May-2026" />
+
+              <label>Length</label>
+              <select name="cruiseLength" value={form.cruiseLength} onChange={handleChange} required>
+                <option value="">Select cruise length</option>
+                <option value="1-3 days">1-3 days</option>
+                <option value="4-6 days">4-6 days</option>
+                <option value="7-9 days">7-9 days</option>
+                <option value="10-13 days">10-13 days</option>
+                <option value="14 and more days">14 and more days</option>
+                <option value="30 and more days">30 and more days</option>
+              </select>
+
+              <label>Room type</label>
+              <select name="roomType" value={form.roomType} onChange={handleChange} required>
+                <option value="">Select room type</option>
+                <option value="Any">Any</option>
+                {ROOM_TYPES.map((type) => (
+                  <option key={type} value={type}>{type}</option>
+                ))}
+              </select>
+            </>
+          )}
 
           <div className="row">
             <div>
@@ -339,70 +603,72 @@ export default function App() {
             </div>
           )}
 
-          <div style={{ display: "flex", gap: "12px" }}>
-            <div style={{ flex: 1 }}>
-              <label>Preferred dates</label>
-              <div className="date-range-container">
-                <input
-                  type="text"
-                  readOnly
-                  value={form.dateFrom && form.dateTo ? `${form.dateFrom} to ${form.dateTo}` : form.dateFrom ? `From: ${form.dateFrom}` : "Select dates"}
-                  onClick={() => setShowCalendar(!showCalendar)}
-                  placeholder="Click to select dates"
-                  className="date-range-input"
-                />
-                {showCalendar && (
-                  <div className="calendar-popup">
-                    <div className="calendar-header">
-                      <button type="button" onClick={() => setCalendarMonth(new Date(calendarMonth.getFullYear(), calendarMonth.getMonth() - 1))}>←</button>
-                      <span>{calendarMonth.toLocaleString('default', { month: 'long', year: 'numeric' })}</span>
-                      <button type="button" onClick={() => setCalendarMonth(new Date(calendarMonth.getFullYear(), calendarMonth.getMonth() + 1))}>→</button>
-                    </div>
-                    {form.dateFrom && (
-                      <div style={{ padding: "8px", textAlign: "center", borderBottom: "1px solid #e5e7eb" }}>
-                        <button type="button" onClick={handleClearDates} style={{ background: "#ef4444", color: "white", border: "none", padding: "6px 12px", borderRadius: "4px", cursor: "pointer", fontSize: "0.9rem" }}>Clear dates</button>
+          {(form.bookingType === "holidays" || form.bookingType === "flights") && (
+            <div style={{ display: "flex", gap: "12px" }}>
+              <div style={{ flex: 1 }}>
+                <label>Preferred dates</label>
+                <div className="date-range-container">
+                  <input
+                    type="text"
+                    readOnly
+                    value={form.dateFrom && form.dateTo ? `${form.dateFrom} to ${form.dateTo}` : form.dateFrom ? `From: ${form.dateFrom}` : "Select dates"}
+                    onClick={() => setShowCalendar(!showCalendar)}
+                    placeholder="Click to select dates"
+                    className="date-range-input"
+                  />
+                  {showCalendar && (
+                    <div className="calendar-popup">
+                      <div className="calendar-header">
+                        <button type="button" onClick={() => setCalendarMonth(new Date(calendarMonth.getFullYear(), calendarMonth.getMonth() - 1))}>←</button>
+                        <span>{calendarMonth.toLocaleString('default', { month: 'long', year: 'numeric' })}</span>
+                        <button type="button" onClick={() => setCalendarMonth(new Date(calendarMonth.getFullYear(), calendarMonth.getMonth() + 1))}>→</button>
                       </div>
-                    )}
-                    <div className="calendar-weekdays">
-                      <div>Sun</div>
-                      <div>Mon</div>
-                      <div>Tue</div>
-                      <div>Wed</div>
-                      <div>Thu</div>
-                      <div>Fri</div>
-                      <div>Sat</div>
+                      {form.dateFrom && (
+                        <div style={{ padding: "8px", textAlign: "center", borderBottom: "1px solid #e5e7eb" }}>
+                          <button type="button" onClick={handleClearDates} style={{ background: "#ef4444", color: "white", border: "none", padding: "6px 12px", borderRadius: "4px", cursor: "pointer", fontSize: "0.9rem" }}>Clear dates</button>
+                        </div>
+                      )}
+                      <div className="calendar-weekdays">
+                        <div>Sun</div>
+                        <div>Mon</div>
+                        <div>Tue</div>
+                        <div>Wed</div>
+                        <div>Thu</div>
+                        <div>Fri</div>
+                        <div>Sat</div>
+                      </div>
+                      <div className="calendar-days">
+                        {Array.from({ length: getFirstDayOfMonth(calendarMonth) }).map((_, i) => (
+                          <div key={`empty-${i}`} className="calendar-day empty"></div>
+                        ))}
+                        {Array.from({ length: getDaysInMonth(calendarMonth) }).map((_, i) => {
+                          const day = i + 1;
+                          return (
+                            <button
+                              key={day}
+                              type="button"
+                              className={`calendar-day ${isDateInRange(day) ? 'in-range' : ''} ${isDateSelected(day) ? 'selected' : ''}`}
+                              onClick={() => handleDateSelect(day)}
+                            >
+                              {day}
+                            </button>
+                          );
+                        })}
+                      </div>
                     </div>
-                    <div className="calendar-days">
-                      {Array.from({ length: getFirstDayOfMonth(calendarMonth) }).map((_, i) => (
-                        <div key={`empty-${i}`} className="calendar-day empty"></div>
-                      ))}
-                      {Array.from({ length: getDaysInMonth(calendarMonth) }).map((_, i) => {
-                        const day = i + 1;
-                        return (
-                          <button
-                            key={day}
-                            type="button"
-                            className={`calendar-day ${isDateInRange(day) ? 'in-range' : ''} ${isDateSelected(day) ? 'selected' : ''}`}
-                            onClick={() => handleDateSelect(day)}
-                          >
-                            {day}
-                          </button>
-                        );
-                      })}
-                    </div>
-                  </div>
-                )}
-              </div>
-            </div>
-            {form.dateFrom && form.dateTo && (
-              <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
-                <label style={{ fontSize: "0.9rem", fontWeight: "600" }}>Nights</label>
-                <div className="nights-display">
-                  <div className="nights-number">{calculateNights()}</div>
+                  )}
                 </div>
               </div>
-            )}
-          </div>
+              {form.dateFrom && form.dateTo && (
+                <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
+                  <label style={{ fontSize: "0.9rem", fontWeight: "600" }}>Nights</label>
+                  <div className="nights-display">
+                    <div className="nights-number">{calculateNights()}</div>
+                  </div>
+                </div>
+              )}
+            </div>
+          )}
 
           <label>Approximate budget</label>
           <input name="budget" value={form.budget} onChange={handleChange} required placeholder="e.g. £1,500 total" />
@@ -410,6 +676,7 @@ export default function App() {
           <label>Anything else we should know?</label>
           <textarea name="notes" value={form.notes} onChange={handleChange} rows="4" placeholder="Holiday type, excursion, park tickets, must‑haves..." />
 
+          <button type="submit" className="button" style={{ background: theme.accent }}>Send enquiry</button>
         </form>
 
       {showAdminDot && (
