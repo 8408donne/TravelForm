@@ -38,9 +38,12 @@ export default function App() {
     sailingDate: "",
     cruiseLength: "",
     roomType: "",
-    adults: 1,
-    children: 0,
-    childrenAges: [],
+    eventLocation: "",
+    eventDate: "",
+    eventType: "",
+    eventTypeOther: "",
+    rooms: 1,
+    roomDetails: [{ adults: 1, children: 0, childrenAges: [] }],
     dateFrom: "",
     dateTo: "",
     budget: "",
@@ -69,10 +72,15 @@ export default function App() {
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
-    if (name === "children") {
-      const numChildren = parseInt(value) || 0;
-      const ages = Array(Math.max(0, numChildren)).fill("");
-      setForm((p) => ({ ...p, [name]: numChildren, childrenAges: ages }));
+    if (name === "rooms") {
+      const numRooms = Math.max(1, parseInt(value) || 1);
+      setForm((p) => {
+        const existing = p.roomDetails || [];
+        const roomDetails = Array.from({ length: numRooms }, (_, i) =>
+          existing[i] || { adults: 1, children: 0, childrenAges: [] }
+        );
+        return { ...p, rooms: numRooms, roomDetails };
+      });
     } else if (name === "departureAirport") {
       setForm((p) => ({ ...p, [name]: value }));
       if (value.length >= 2) {
@@ -211,11 +219,31 @@ export default function App() {
     setForm((p) => ({ ...p, dateFrom: "", dateTo: "" }));
   };
 
-  const handleChildAgeChange = (index, value) => {
+  const handleRoomChange = (roomIndex, field, value) => {
     setForm((p) => {
-      const updatedAges = [...p.childrenAges];
-      updatedAges[index] = value;
-      return { ...p, childrenAges: updatedAges };
+      const roomDetails = [...p.roomDetails];
+      const room = { ...roomDetails[roomIndex] };
+      if (field === "children") {
+        const num = parseInt(value) || 0;
+        room.children = num;
+        room.childrenAges = Array(Math.max(0, num)).fill("");
+      } else {
+        room[field] = parseInt(value) || 0;
+      }
+      roomDetails[roomIndex] = room;
+      return { ...p, roomDetails };
+    });
+  };
+
+  const handleChildAgeChange = (roomIndex, childIndex, value) => {
+    setForm((p) => {
+      const roomDetails = [...p.roomDetails];
+      const room = { ...roomDetails[roomIndex] };
+      const ages = [...room.childrenAges];
+      ages[childIndex] = value;
+      room.childrenAges = ages;
+      roomDetails[roomIndex] = room;
+      return { ...p, roomDetails };
     });
   };
 
@@ -234,7 +262,7 @@ export default function App() {
     const payload = { 
       ...form, 
       ownerEmail,
-      childrensAges: form.childrenAges,
+      roomDetails: form.roomDetails,
       nights: calculateNights()
     };
   
@@ -263,9 +291,12 @@ export default function App() {
           sailingDate: "",
           cruiseLength: "",
           roomType: "",
-          adults: 1,
-          children: 0,
-          childrenAges: [],
+          eventLocation: "",
+          eventDate: "",
+          eventType: "",
+          eventTypeOther: "",
+          rooms: 1,
+          roomDetails: [{ adults: 1, children: 0, childrenAges: [] }],
           dateFrom: "",
           dateTo: "",
           budget: "",
@@ -573,35 +604,73 @@ export default function App() {
             </>
           )}
 
-          <div className="row">
-            <div>
-              <label>Number of adults</label>
-              <input type="number" min="1" name="adults" value={form.adults} onChange={handleChange} />
-            </div>
-            <div>
-              <label>Number of children</label>
-              <input type="number" min="0" name="children" value={form.children} onChange={handleChange} />
-            </div>
-          </div>
+          {form.bookingType === "events" && (
+            <>
+              <label>Event location</label>
+              <input name="eventLocation" value={form.eventLocation} onChange={handleChange} required placeholder="e.g. London, Wembley Stadium" />
 
-          {form.children > 0 && (
-            <div className="children-ages">
-              <label>Children's ages</label>
-              <div className="ages-row">
-                {Array.from({ length: form.children }).map((_, index) => (
-                  <input
-                    key={index}
-                    type="number"
-                    min="0"
-                    max="18"
-                    placeholder={`Child ${index + 1} age`}
-                    value={form.childrenAges[index] || ""}
-                    onChange={(e) => handleChildAgeChange(index, e.target.value)}
-                  />
-                ))}
-              </div>
+              <label>Event date</label>
+              <input name="eventDate" value={form.eventDate} onChange={handleChange} required placeholder="e.g. 15th June 2026" />
+
+              <label>Type of event</label>
+              <select name="eventType" value={form.eventType} onChange={handleChange} required>
+                <option value="">Select event type</option>
+                <option value="Concert">Concert</option>
+                <option value="Festival">Festival</option>
+                <option value="Sporting Event">Sporting Event</option>
+                <option value="Theatre">Theatre</option>
+                <option value="Other">Other</option>
+              </select>
+
+              {form.eventType === "Other" && (
+                <>
+                  <label>Please specify</label>
+                  <input name="eventTypeOther" value={form.eventTypeOther} onChange={handleChange} required placeholder="e.g. Exhibition" />
+                </>
+              )}
+            </>
+          )}
+
+          {(form.bookingType === "holidays" || form.bookingType === "cruise") && (
+            <div>
+              <label>Number of rooms</label>
+              <input type="number" min="1" max="9" name="rooms" value={form.rooms} onChange={handleChange} />
             </div>
           )}
+
+          {form.roomDetails.map((room, roomIndex) => (
+            <div key={roomIndex}>
+              {form.rooms > 1 && <label style={{ fontWeight: 700, fontSize: "1rem", marginBottom: "4px" }}>Room {roomIndex + 1}</label>}
+              <div className="row">
+                <div>
+                  <label>Adults</label>
+                  <input type="number" min="1" value={room.adults} onChange={(e) => handleRoomChange(roomIndex, "adults", e.target.value)} />
+                </div>
+                <div>
+                  <label>Children</label>
+                  <input type="number" min="0" value={room.children} onChange={(e) => handleRoomChange(roomIndex, "children", e.target.value)} />
+                </div>
+              </div>
+              {room.children > 0 && (
+                <div className="children-ages">
+                  <label>Children's ages</label>
+                  <div className="ages-row">
+                    {Array.from({ length: room.children }).map((_, childIndex) => (
+                      <input
+                        key={childIndex}
+                        type="number"
+                        min="0"
+                        max="18"
+                        placeholder={`Child ${childIndex + 1} age`}
+                        value={room.childrenAges[childIndex] || ""}
+                        onChange={(e) => handleChildAgeChange(roomIndex, childIndex, e.target.value)}
+                      />
+                    ))}
+                  </div>
+                </div>
+              )}
+            </div>
+          ))}
 
           {(form.bookingType === "holidays" || form.bookingType === "flights") && (
             <div style={{ display: "flex", gap: "12px" }}>
