@@ -14,9 +14,9 @@ export default async function handler(req, res) {
 
   try {
     const enquiry = req.body;
-    const ownerEmail = enquiry.ownerEmail;
+    const ownerEmail = enquiry.ownerEmail || process.env.OWNER_EMAIL;
 
-    if (!ownerEmail) return res.status(400).json({ error: "No owner email provided" });
+    if (!ownerEmail) return res.status(400).json({ error: "No recipient email configured" });
     if (!process.env.RESEND_API_KEY) return res.status(500).json({ error: "RESEND_API_KEY not configured" });
 
     const resend = new Resend(process.env.RESEND_API_KEY);

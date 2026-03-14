@@ -256,7 +256,7 @@ export default function App() {
       return;
     }
 
-    if (!ownerEmail) { alert("This form is not configured yet. Please set your email in the admin panel."); return; 
+    if (!ownerEmail) { console.warn("No owner email in localStorage, server will use env var."); 
     }
 
     const payload = { 
