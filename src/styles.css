@@ -12,18 +12,32 @@ body, html, #root { height: 100%; margin: 0; }
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
-  padding: 2rem;
+  justify-content: flex-start;
+  padding: 0.25rem 2rem 2rem;
   font-family: var(--font, "Segoe UI", system-ui, -apple-system, sans-serif);
   max-width: 520px;
   margin: 0 auto;
   width: 100%;
 }
 
-.logo { max-height: 48px; margin-bottom: 8px; }
+.logo { max-height: 180px; width: auto; margin-bottom: 4px; object-fit: contain; }
 
-.title { margin: 0 0 6px; font-size: 1.8rem; }
-.subtitle { margin: 0 0 16px; color: #6b7280; }
+.logo-placeholder {
+  height: 180px;
+  margin-bottom: 4px;
+  padding: 0 20px;
+  border: 2px dashed #d1d5db;
+  border-radius: 8px;
+  color: #9ca3af;
+  font-size: 0.9rem;
+  font-weight: 600;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.title { margin: 0 0 2px; font-size: 1.8rem; }
+.subtitle { margin: 0 0 12px; color: #6b7280; }
 
 .form { display: flex; flex-direction: column; gap: 10px; }
 .form label { font-weight: 600; font-size: 0.9rem; }
@@ -329,7 +343,11 @@ body, html, #root { height: 100%; margin: 0; }
   }
 
   .logo {
-    max-height: 36px;
+    max-height: 132px;
+  }
+
+  .logo-placeholder {
+    height: 132px;
   }
 
   .title {

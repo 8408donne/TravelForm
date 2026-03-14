@@ -5,18 +5,12 @@ export default function AdminPanel({ onClose, theme, setTheme, ownerEmail, setOw
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [creatingPassword, setCreatingPassword] = useState(false);
 
-  const handleImageUpload = (e, imageType) => {
+  const handleImageUpload = (e) => {
     const file = e.target.files?.[0];
     if (!file) return;
-    
     const reader = new FileReader();
     reader.onload = (event) => {
-      const base64 = event.target?.result;
-      if (imageType === 'bg') {
-        setTheme(t => ({ ...t, bgImage: base64 }));
-      } else if (imageType === 'logo') {
-        setTheme(t => ({ ...t, logo: base64 }));
-      }
+      setTheme(t => ({ ...t, logo: event.target?.result }));
     };
     reader.readAsDataURL(file);
   };
@@ -102,10 +96,6 @@ export default function AdminPanel({ onClose, theme, setTheme, ownerEmail, setOw
     <div className="panel">
       <h3>Customise TravelForm</h3>
 
-      <label>Background Image</label>
-      <input type="file" accept="image/*" onChange={(e) => handleImageUpload(e, 'bg')} />
-      {theme.bgImage && <small style={{color: '#666'}}>✓ Image uploaded</small>}
-
       <label>Title</label>
       <input value={theme.title || ""} onChange={(e) => setTheme((t) => ({ ...t, title: e.target.value }))} placeholder="Holiday Enquiry" />
 
@@ -113,14 +103,11 @@ export default function AdminPanel({ onClose, theme, setTheme, ownerEmail, setOw
       <input value={theme.subtitle || ""} onChange={(e) => setTheme((t) => ({ ...t, subtitle: e.target.value }))} placeholder="Tell us what you're dreaming of..." />
 
       <label>Logo</label>
-      <input type="file" accept="image/*" onChange={(e) => handleImageUpload(e, 'logo')} />
+      <input type="file" accept="image/*" onChange={handleImageUpload} />
       {theme.logo && <small style={{color: '#666'}}>✓ Logo uploaded</small>}
 
       <label>Accent Colour</label>
       <input type="color" value={theme.accent} onChange={(e) => setTheme((t) => ({ ...t, accent: e.target.value }))} />
-
-      <label>Card Background Colour</label>
-      <input type="color" value={rgbaToHex(theme.cardBg)} onChange={(e) => setTheme((t) => ({ ...t, cardBg: e.target.value }))} />
 
       <label>Font Family</label>
       <select value={theme.font} onChange={(e) => setTheme((t) => ({ ...t, font: e.target.value }))}>
@@ -128,10 +115,19 @@ export default function AdminPanel({ onClose, theme, setTheme, ownerEmail, setOw
         <option value='Poppins, system-ui, -apple-system, sans-serif'>Poppins</option>
         <option value='Montserrat, system-ui, -apple-system, sans-serif'>Montserrat</option>
         <option value='Arial, system-ui, -apple-system, sans-serif'>Arial</option>
+        <option value='Inter, system-ui, -apple-system, sans-serif'>Inter</option>
+        <option value='Roboto, system-ui, -apple-system, sans-serif'>Roboto</option>
+        <option value='Open Sans, system-ui, -apple-system, sans-serif'>Open Sans</option>
+        <option value='Lato, system-ui, -apple-system, sans-serif'>Lato</option>
+        <option value='Nunito, system-ui, -apple-system, sans-serif'>Nunito</option>
+        <option value='Raleway, system-ui, -apple-system, sans-serif'>Raleway</option>
+        <option value='Playfair Display, Georgia, serif'>Playfair Display</option>
+        <option value='Merriweather, Georgia, serif'>Merriweather</option>
+        <option value='Quicksand, system-ui, -apple-system, sans-serif'>Quicksand</option>
+        <option value='DM Sans, system-ui, -apple-system, sans-serif'>DM Sans</option>
+        <option value='Source Sans 3, system-ui, -apple-system, sans-serif'>Source Sans</option>
+        <option value='Georgia, serif'>Georgia</option>
       </select>
-
-      <label>Overlay Darkness</label>
-      <input type="range" min="0" max="0.8" step="0.05" value={theme.overlay} onChange={(e) => setTheme((t) => ({ ...t, overlay: e.target.value }))} />
 
       <label>Owner Email</label>
       <input value={ownerEmail} onChange={(e) => setOwnerEmail(e.target.value)} placeholder="owner@example.com" />
@@ -142,14 +138,4 @@ export default function AdminPanel({ onClose, theme, setTheme, ownerEmail, setOw
       </div>
     </div>
   );
-}
-
-// helper to convert rgba string to hex fallback
-function rgbaToHex(rgba) {
-  try {
-    if (rgba.startsWith("rgba") || rgba.startsWith("rgb")) return "#ffffff";
-    return rgba;
-  } catch {
-    return "#ffffff";
-  }
 }

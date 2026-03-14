@@ -20,6 +20,12 @@ if (fs.existsSync(envFile)) {
 const app = express();
 app.use(express.json());
 
+// Serve static frontend in production
+const distPath = path.join(__dirname, "dist");
+if (fs.existsSync(distPath)) {
+  app.use(express.static(distPath));
+}
+
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const dataFile = path.join(__dirname, "admin-data.json");
 const enquiriesFile = path.join(__dirname, "enquiries.json");
@@ -272,7 +278,14 @@ app.post("/api/admin/resend-enquiry", async (req, res) => {
   }
 });
 
-const PORT = 3001;
+// Catch-all: serve index.html for client-side routing
+if (fs.existsSync(distPath)) {
+  app.get("*", (req, res) => {
+    res.sendFile(path.join(distPath, "index.html"));
+  });
+}
+
+const PORT = process.env.PORT || 3001;
 app.listen(PORT, () => {
-  console.log(`Backend server running on http://localhost:${PORT}`);
+  console.log(`Server running on http://localhost:${PORT}`);
 });

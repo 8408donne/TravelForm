@@ -320,7 +320,7 @@ export default function App() {
         fontFamily: theme.font
       }}
     >
-      {theme.logo && <img src={theme.logo} alt="logo" className="logo" />}
+      {theme.logo ? <img src={theme.logo} alt="logo" className="logo" /> : <div className="logo-placeholder">Your Logo</div>}
         <h1 className="title" style={{ color: theme.accent }}>{theme.title || "Holiday Enquiry"}</h1>
         <p className="subtitle">{theme.subtitle || "Tell us what you're dreaming of and we'll come back with ideas."}</p>
 
