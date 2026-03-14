@@ -13,6 +13,7 @@ dist-ssr
 *.local
 admin-data.json
 enquiries.json
+.vercel
 
 # Editor directories and files
 .vscode/*
