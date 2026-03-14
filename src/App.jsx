@@ -23,7 +23,7 @@ export default function App() {
   const [showAdminDot] = useState(true);
 
   const [form, setForm] = useState({
-    bookingType: "holidays",
+    bookingType: "",
     name: "",
     email: "",
     phone: "",
@@ -276,7 +276,7 @@ export default function App() {
       if (res.ok) {
         alert("Thank you — your enquiry has been sent.");
         setForm({
-          bookingType: "holidays",
+          bookingType: "",
           name: "",
           email: "",
           phone: "",
@@ -321,8 +321,8 @@ export default function App() {
       }}
     >
       {theme.logo && <img src={theme.logo} alt="logo" className="logo" />}
-        <h1 className="title" style={{ color: theme.accent }}>Holiday Enquiry</h1>
-        <p className="subtitle">Tell us what you’re dreaming of and we’ll come back with ideas.</p>
+        <h1 className="title" style={{ color: theme.accent }}>{theme.title || "Holiday Enquiry"}</h1>
+        <p className="subtitle">{theme.subtitle || "Tell us what you're dreaming of and we'll come back with ideas."}</p>
 
         <form onSubmit={submit} className="form">
           <label>Full name</label>
@@ -335,47 +335,18 @@ export default function App() {
           <input type="tel" name="phone" value={form.phone} onChange={handleChange} placeholder="07123 456789" />
 
           <label>Booking type</label>
-          <div style={{ display: "flex", gap: "16px", flexWrap: "wrap", marginBottom: "8px" }}>
-            <label style={{ display: "flex", alignItems: "center", fontWeight: "normal", gap: "6px" }}>
-              <input
-                type="radio"
-                name="bookingType"
-                value="holidays"
-                checked={form.bookingType === "holidays"}
-                onChange={handleChange}
-              />
-              Holidays
-            </label>
-            <label style={{ display: "flex", alignItems: "center", fontWeight: "normal", gap: "6px" }}>
-              <input
-                type="radio"
-                name="bookingType"
-                value="flights"
-                checked={form.bookingType === "flights"}
-                onChange={handleChange}
-              />
-              Flights
-            </label>
-            <label style={{ display: "flex", alignItems: "center", fontWeight: "normal", gap: "6px" }}>
-              <input
-                type="radio"
-                name="bookingType"
-                value="cruise"
-                checked={form.bookingType === "cruise"}
-                onChange={handleChange}
-              />
-              Cruise
-            </label>
-            <label style={{ display: "flex", alignItems: "center", fontWeight: "normal", gap: "6px" }}>
-              <input
-                type="radio"
-                name="bookingType"
-                value="events"
-                checked={form.bookingType === "events"}
-                onChange={handleChange}
-              />
-              Events
-            </label>
+          <div className="tab-group">
+            {["holidays", "flights", "cruise", "events"].map((type) => (
+              <button
+                key={type}
+                type="button"
+                className={`tab-btn ${form.bookingType === type ? "active" : ""}`}
+                style={form.bookingType === type ? { background: theme.accent, borderColor: theme.accent } : {}}
+                onClick={() => setForm((p) => ({ ...p, bookingType: type }))}
+              >
+                {type.charAt(0).toUpperCase() + type.slice(1)}
+              </button>
+            ))}
           </div>
 
           {form.bookingType === "holidays" && (
@@ -638,7 +609,7 @@ export default function App() {
             </div>
           )}
 
-          {form.roomDetails.map((room, roomIndex) => (
+          {form.bookingType && form.roomDetails.map((room, roomIndex) => (
             <div key={roomIndex}>
               {form.rooms > 1 && <label style={{ fontWeight: 700, fontSize: "1rem", marginBottom: "4px" }}>Room {roomIndex + 1}</label>}
               <div className="row">
@@ -739,13 +710,17 @@ export default function App() {
             </div>
           )}
 
-          <label>Approximate budget</label>
-          <input name="budget" value={form.budget} onChange={handleChange} required placeholder="e.g. £1,500 total" />
+          {form.bookingType && (
+            <>
+              <label>Approximate budget</label>
+              <input name="budget" value={form.budget} onChange={handleChange} required placeholder="e.g. £1,500 total" />
 
-          <label>Anything else we should know?</label>
-          <textarea name="notes" value={form.notes} onChange={handleChange} rows="4" placeholder="Holiday type, excursion, park tickets, must‑haves..." />
+              <label>Anything else we should know?</label>
+              <textarea name="notes" value={form.notes} onChange={handleChange} rows="4" placeholder="Holiday type, excursion, park tickets, must‑haves..." />
 
-          <button type="submit" className="button" style={{ background: theme.accent }}>Send enquiry</button>
+              <button type="submit" className="button" style={{ background: theme.accent }}>Send enquiry</button>
+            </>
+          )}
         </form>
 
       {showAdminDot && (

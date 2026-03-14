@@ -136,17 +136,61 @@ app.post("/api/send-enquiry", async (req, res) => {
         const { Resend } = await import("resend");
         const resend = new Resend(process.env.RESEND_API_KEY);
 
+        const roomDetailsHtml = (enquiry.roomDetails || []).map((room, i) => {
+          const label = (enquiry.roomDetails || []).length > 1 ? `<strong>Room ${i + 1}:</strong> ` : "";
+          let html = `<p>${label}<strong>Adults:</strong> ${room.adults}, <strong>Children:</strong> ${room.children}</p>`;
+          if (room.childrenAges?.length) html += `<p><strong>Children's Ages:</strong> ${room.childrenAges.join(", ")}</p>`;
+          return html;
+        }).join("");
+
+        let typeSpecificHtml = "";
+
+        if (enquiry.bookingType === "holidays") {
+          typeSpecificHtml = `
+            <p><strong>Departure Airport:</strong> ${escapeHtml(enquiry.departureAirport || "")}</p>
+            <p><strong>Allow Nearby Airports:</strong> ${enquiry.allowNearbyAirports ? "Yes" : "No"}</p>
+            <p><strong>Destination:</strong> ${escapeHtml(enquiry.destination || "")}</p>
+            <p><strong>Board Basis:</strong> ${escapeHtml(enquiry.boardBasis || "")}</p>
+            <p><strong>Rooms:</strong> ${enquiry.rooms || 1}</p>
+            ${roomDetailsHtml}
+            <p><strong>Dates:</strong> ${escapeHtml(enquiry.dateFrom || "")} to ${escapeHtml(enquiry.dateTo || "")}</p>
+            <p><strong>Nights:</strong> ${enquiry.nights || ""}</p>
+          `;
+        } else if (enquiry.bookingType === "flights") {
+          typeSpecificHtml = `
+            <p><strong>Departure Airport:</strong> ${escapeHtml(enquiry.departureAirport || "")}</p>
+            <p><strong>Arrival Airport:</strong> ${escapeHtml(enquiry.arrivalAirport || "")}</p>
+            ${roomDetailsHtml}
+            <p><strong>Dates:</strong> ${escapeHtml(enquiry.dateFrom || "")} to ${escapeHtml(enquiry.dateTo || "")}</p>
+            <p><strong>Nights:</strong> ${enquiry.nights || ""}</p>
+          `;
+        } else if (enquiry.bookingType === "cruise") {
+          typeSpecificHtml = `
+            <p><strong>Destination:</strong> ${escapeHtml(enquiry.destination || "")}</p>
+            <p><strong>Departure Port:</strong> ${escapeHtml(enquiry.departurePort || "")}</p>
+            <p><strong>Cruise Liner:</strong> ${escapeHtml(enquiry.cruiseLiner || "")}</p>
+            <p><strong>Ship:</strong> ${escapeHtml(enquiry.ship || "")}</p>
+            <p><strong>Sailing Date:</strong> ${escapeHtml(enquiry.sailingDate || "")}</p>
+            <p><strong>Length:</strong> ${escapeHtml(enquiry.cruiseLength || "")}</p>
+            <p><strong>Room Type:</strong> ${escapeHtml(enquiry.roomType || "")}</p>
+            <p><strong>Rooms:</strong> ${enquiry.rooms || 1}</p>
+            ${roomDetailsHtml}
+          `;
+        } else if (enquiry.bookingType === "events") {
+          typeSpecificHtml = `
+            <p><strong>Event Location:</strong> ${escapeHtml(enquiry.eventLocation || "")}</p>
+            <p><strong>Event Date:</strong> ${escapeHtml(enquiry.eventDate || "")}</p>
+            <p><strong>Event Type:</strong> ${escapeHtml(enquiry.eventType === "Other" ? enquiry.eventTypeOther || "Other" : enquiry.eventType || "")}</p>
+            ${roomDetailsHtml}
+          `;
+        }
+
         const html = `
-          <h2>New Travel Enquiry</h2>
+          <h2>New ${escapeHtml((enquiry.bookingType || "holidays").charAt(0).toUpperCase() + (enquiry.bookingType || "holidays").slice(1))} Enquiry</h2>
           <p><strong>Name:</strong> ${escapeHtml(enquiry.name)}</p>
-          <p><strong>Email:</strong> ${escapeHtml(enquiry.email)}</p>
+          <p><strong>Email:</strong> ${escapeHtml(enquiry.email || "")}</p>
           <p><strong>Phone:</strong> ${escapeHtml(enquiry.phone || "")}</p>
-          <p><strong>Departure Airport:</strong> ${escapeHtml(enquiry.departureAirport || "")}</p>
-          <p><strong>Allow Nearby Airports:</strong> ${enquiry.allowNearbyAirports ? "Yes" : "No"}</p>
-          <p><strong>Destination:</strong> ${escapeHtml(enquiry.destination || "")}</p>
-          <p><strong>Dates:</strong> ${escapeHtml(enquiry.dateFrom || "")} to ${escapeHtml(enquiry.dateTo || "")}</p>
-          <p><strong>Adults:</strong> ${enquiry.adults || ""}, <strong>Children:</strong> ${enquiry.children || ""}</p>
-          ${enquiry.childrenAges?.length ? `<p><strong>Children's Ages:</strong> ${enquiry.childrenAges.join(", ")}</p>` : ""}
+          ${typeSpecificHtml}
           <p><strong>Budget:</strong> ${escapeHtml(enquiry.budget || "")}</p>
           <p><strong>Notes:</strong><br/>${escapeHtml(enquiry.notes || "").replace(/\n/g, "<br/>")}</p>
         `;
@@ -155,7 +199,7 @@ app.post("/api/send-enquiry", async (req, res) => {
           from: process.env.FROM_EMAIL || "noreply@resend.dev",
           to: ownerEmail,
           replyTo: enquiry.email,
-          subject: `New TravelForm Enquiry from ${enquiry.name}`,
+          subject: `New ${(enquiry.bookingType || "holidays").charAt(0).toUpperCase() + (enquiry.bookingType || "holidays").slice(1)} Enquiry from ${enquiry.name}`,
           html
         });
 

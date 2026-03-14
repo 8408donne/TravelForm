@@ -106,6 +106,12 @@ export default function AdminPanel({ onClose, theme, setTheme, ownerEmail, setOw
       <input type="file" accept="image/*" onChange={(e) => handleImageUpload(e, 'bg')} />
       {theme.bgImage && <small style={{color: '#666'}}>✓ Image uploaded</small>}
 
+      <label>Title</label>
+      <input value={theme.title || ""} onChange={(e) => setTheme((t) => ({ ...t, title: e.target.value }))} placeholder="Holiday Enquiry" />
+
+      <label>Subtitle</label>
+      <input value={theme.subtitle || ""} onChange={(e) => setTheme((t) => ({ ...t, subtitle: e.target.value }))} placeholder="Tell us what you're dreaming of..." />
+
       <label>Logo</label>
       <input type="file" accept="image/*" onChange={(e) => handleImageUpload(e, 'logo')} />
       {theme.logo && <small style={{color: '#666'}}>✓ Logo uploaded</small>}
