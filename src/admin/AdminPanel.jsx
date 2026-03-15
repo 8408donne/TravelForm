@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 
-export default function AdminPanel({ onClose, theme, setTheme, ownerEmail, setOwnerEmail }) {
+export default function AdminPanel({ onClose, theme, setTheme }) {
   const [password, setPassword] = useState("");
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [creatingPassword, setCreatingPassword] = useState(false);
@@ -27,7 +27,6 @@ export default function AdminPanel({ onClose, theme, setTheme, ownerEmail, setOw
       // load settings
       const s = await fetch("/api/admin/get-settings").then(r => r.json());
       if (s?.theme) setTheme((t) => ({ ...t, ...s.theme }));
-      if (s?.ownerEmail) setOwnerEmail(s.ownerEmail);
     } else {
       alert(data?.message || "Invalid password");
     }
@@ -51,21 +50,15 @@ export default function AdminPanel({ onClose, theme, setTheme, ownerEmail, setOw
   };
 
   const saveSettings = async () => {
-    if (!ownerEmail) {
-      alert("Please enter an email address.");
-      return;
-    }
-    
     try {
       // Save to backend
       await fetch("/api/admin/save-settings", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ theme, ownerEmail })
+        body: JSON.stringify({ theme })
       });
       
       // Also save to localStorage for quick access
-      localStorage.setItem("travelform_owner_email", ownerEmail);
       localStorage.setItem("travelform_theme", JSON.stringify(theme));
       
       alert("Settings saved.");
@@ -128,9 +121,6 @@ export default function AdminPanel({ onClose, theme, setTheme, ownerEmail, setOw
         <option value='Source Sans 3, system-ui, -apple-system, sans-serif'>Source Sans</option>
         <option value='Georgia, serif'>Georgia</option>
       </select>
-
-      <label>Owner Email</label>
-      <input value={ownerEmail} onChange={(e) => setOwnerEmail(e.target.value)} placeholder="owner@example.com" />
 
       <div className="panel-actions">
         <button onClick={saveSettings} className="btn">Save</button>

@@ -18,7 +18,6 @@ export default function App() {
     };
   });
 
-  const [ownerEmail, setOwnerEmail] = useState(() => localStorage.getItem("travelform_owner_email") || "");
   const [isAdminUnlocked, setIsAdminUnlocked] = useState(false);
   const [showAdminDot] = useState(true);
 
@@ -264,12 +263,8 @@ export default function App() {
       return;
     }
 
-    if (!ownerEmail) { console.warn("No owner email in localStorage, server will use env var."); 
-    }
-
     const payload = { 
       ...form, 
-      ownerEmail,
       roomDetails: form.roomDetails,
       nights: calculateNights()
     };
@@ -776,8 +771,6 @@ export default function App() {
           onClose={() => setIsAdminUnlocked(false)}
           theme={theme}
           setTheme={setTheme}
-          ownerEmail={ownerEmail}
-          setOwnerEmail={setOwnerEmail}
         />
       )}
     </div>
