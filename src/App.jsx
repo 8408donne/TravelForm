@@ -63,6 +63,7 @@ export default function App() {
   const [portSuggestions, setPortSuggestions] = useState([]);
   const [showCalendar, setShowCalendar] = useState(false);
   const [calendarMonth, setCalendarMonth] = useState(new Date());
+  const [modal, setModal] = useState(null);
 
 
 
@@ -265,7 +266,7 @@ export default function App() {
 
     // Validate that at least email or phone is provided
     if (!form.email && !form.phone) {
-      alert("Please provide either an email address or phone number.");
+      setModal("Please provide either an email address or phone number.");
       return;
     }
 
@@ -283,7 +284,7 @@ export default function App() {
       });
 
       if (res.ok) {
-        alert("Thank you — your enquiry has been sent.");
+        setModal("Thank you — your enquiry has been sent.");
         setForm({
           bookingType: "",
           name: "",
@@ -316,11 +317,11 @@ export default function App() {
       } else {
         const errorData = await res.json().catch(() => ({}));
         console.error("Error response:", res.status, errorData);
-        alert(`Error: ${errorData.error || "There was an error sending your enquiry. Please try again."}`);
+        setModal(errorData.error || "There was an error sending your enquiry. Please try again.");
       }
     } catch (error) {
       console.error("Network error:", error);
-      alert("Network error: Unable to connect to the server. Please check your connection and try again.");
+      setModal("Unable to connect to the server. Please check your connection and try again.");
     }
   };
 
@@ -770,6 +771,15 @@ export default function App() {
           }}
           title="Admin"
         />
+      )}
+
+      {modal && (
+        <div className="modal-overlay" onClick={() => setModal(null)}>
+          <div className="modal" onClick={e => e.stopPropagation()}>
+            <p>{modal}</p>
+            <button className="button" style={{ background: theme.accent }} onClick={() => setModal(null)}>OK</button>
+          </div>
+        </div>
       )}
 
       {isAdminUnlocked && (

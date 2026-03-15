@@ -61,7 +61,7 @@ export default function AdminPanel({ onClose, theme, setTheme }) {
       if (data.logo) setTheme(t => ({ ...t, logo: data.logo }));
       localStorage.setItem("travelform_theme", JSON.stringify({ ...theme, logo: data.logo || theme.logo }));
       
-      alert("Settings saved.");
+      onClose();
     } catch (error) {
       alert("Error saving settings. Please try again.");
     }
