@@ -97,7 +97,11 @@ export default function AdminPanel({ onClose, theme, setTheme }) {
 
       <label>Logo</label>
       <input type="file" accept="image/*" onChange={handleImageUpload} />
-      {theme.logo && <small style={{color: '#666'}}>✓ Logo uploaded</small>}
+      {theme.logo && (
+        <div>
+          <img src={theme.logo} alt="Current logo" style={{ maxHeight: 80, marginTop: 4 }} />
+        </div>
+      )}
 
       <label>Accent Colour</label>
       <input type="color" value={theme.accent} onChange={(e) => setTheme((t) => ({ ...t, accent: e.target.value }))} />
