@@ -369,7 +369,7 @@ export default function App() {
                   value={form.departureAirport}
                   onChange={handleChange}
                   required
-                  placeholder="e.g. London LHR (min 2 chars)"
+                  placeholder="e.g. London LHR"
                 />
                 {airportSuggestions.length > 0 && (
                   <div className="airport-suggestions">
@@ -404,7 +404,7 @@ export default function App() {
                   value={form.destination}
                   onChange={handleChange}
                   required
-                  placeholder="e.g. Greek islands (min 2 chars)"
+                  placeholder="e.g. Greek islands"
                 />
                 {destinationSuggestions.length > 0 && (
                   <div className="airport-suggestions">
@@ -446,7 +446,7 @@ export default function App() {
                   value={form.departureAirport}
                   onChange={handleChange}
                   required
-                  placeholder="e.g. London LHR (min 2 chars)"
+                  placeholder="e.g. London LHR"
                 />
                 {airportSuggestions.length > 0 && (
                   <div className="airport-suggestions">
@@ -481,7 +481,7 @@ export default function App() {
                   value={form.arrivalAirport}
                   onChange={handleChange}
                   required
-                  placeholder="e.g. New York JFK (min 2 chars)"
+                  placeholder="e.g. New York JFK"
                 />
                 {arrivalSuggestions.length > 0 && (
                   <div className="airport-suggestions">
@@ -524,7 +524,7 @@ export default function App() {
                   value={form.destination}
                   onChange={handleChange}
                   required
-                  placeholder="e.g. Mediterranean (min 2 chars)"
+                  placeholder="e.g. Mediterranean"
                 />
                 {destinationSuggestions.length > 0 && (
                   <div className="airport-suggestions">
@@ -552,7 +552,7 @@ export default function App() {
                   value={form.departurePort}
                   onChange={handleChange}
                   required
-                  placeholder="e.g. Southampton (min 2 chars)"
+                  placeholder="e.g. Southampton"
                 />
                 {portSuggestions.length > 0 && (
                   <div className="airport-suggestions">
