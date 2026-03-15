@@ -493,7 +493,7 @@ export default function App() {
                         {airport.code === "CUSTOM" ? (
                           <em>Use: "{airport.name}"</em>
                         ) : (
-                          <><strong>{airport.code}</strong> - {airport.name}, {airport.city}, {airport.country}</>
+                          <><strong>{airport.code}</strong> - {airport.name}{airport.city && airport.city !== airport.name ? `, ${airport.city}` : ""}, {airport.country}</>
                         )}
                       </div>
                     ))}
