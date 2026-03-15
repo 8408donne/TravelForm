@@ -21,6 +21,12 @@ export default function App() {
   const [isAdminUnlocked, setIsAdminUnlocked] = useState(false);
   const [showAdminDot] = useState(true);
 
+  useEffect(() => {
+    fetch("/api/admin/get-settings").then(r => r.json()).then(data => {
+      if (data?.theme) setTheme(t => ({ ...t, ...data.theme }));
+    }).catch(() => {});
+  }, []);
+
   const [form, setForm] = useState({
     bookingType: "",
     name: "",

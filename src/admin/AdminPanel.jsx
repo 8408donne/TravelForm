@@ -58,8 +58,10 @@ export default function AdminPanel({ onClose, theme, setTheme }) {
         body: JSON.stringify({ theme })
       });
       
-      // Also save to localStorage for quick access
-      localStorage.setItem("travelform_theme", JSON.stringify(theme));
+      const data = await res.json();
+      // Update logo to blob URL if returned
+      if (data.logo) setTheme(t => ({ ...t, logo: data.logo }));
+      localStorage.setItem("travelform_theme", JSON.stringify({ ...theme, logo: data.logo || theme.logo }));
       
       alert("Settings saved.");
     } catch (error) {
