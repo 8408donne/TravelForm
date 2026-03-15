@@ -51,13 +51,11 @@ export default function AdminPanel({ onClose, theme, setTheme }) {
 
   const saveSettings = async () => {
     try {
-      // Save to backend
-      await fetch("/api/admin/save-settings", {
+      const res = await fetch("/api/admin/save-settings", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ theme })
       });
-      
       const data = await res.json();
       // Update logo to blob URL if returned
       if (data.logo) setTheme(t => ({ ...t, logo: data.logo }));
