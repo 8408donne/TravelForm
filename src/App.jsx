@@ -30,6 +30,8 @@ export default function App() {
     departureAirport: "",
     arrivalAirport: "",
     allowNearbyAirports: false,
+    allowNearbyDeparture: false,
+    allowNearbyArrival: false,
     destination: "",
     boardBasis: "",
     departurePort: "",
@@ -99,8 +101,10 @@ export default function App() {
         const filtered = WORLD_AIRPORTS.filter((airport) =>
           airport.code.toUpperCase().includes(value.toUpperCase()) ||
           airport.city.toUpperCase().includes(value.toUpperCase()) ||
-          airport.name.toUpperCase().includes(value.toUpperCase())
+          airport.name.toUpperCase().includes(value.toUpperCase()) ||
+          airport.country.toUpperCase().includes(value.toUpperCase())
         );
+        filtered.push({ code: "CUSTOM", name: value, city: "", country: "(custom entry)" });
         setArrivalSuggestions(filtered);
       } else {
         setArrivalSuggestions([]);
@@ -151,7 +155,11 @@ export default function App() {
   };
 
   const handleArrivalSelect = (airport) => {
-    setForm((p) => ({ ...p, arrivalAirport: `${airport.name}, ${airport.city} (${airport.code})` }));
+    if (airport.code === "CUSTOM") {
+      setForm((p) => ({ ...p, arrivalAirport: airport.name }));
+    } else {
+      setForm((p) => ({ ...p, arrivalAirport: `${airport.name}, ${airport.city} (${airport.code})` }));
+    }
     setArrivalSuggestions([]);
   };
 
@@ -283,6 +291,8 @@ export default function App() {
           departureAirport: "",
           arrivalAirport: "",
           allowNearbyAirports: false,
+          allowNearbyDeparture: false,
+          allowNearbyArrival: false,
           destination: "",
           boardBasis: "",
           departurePort: "",
@@ -451,6 +461,17 @@ export default function App() {
                   </div>
                 )}
               </div>
+              <div style={{ marginTop: "8px" }}>
+                <label style={{ display: "flex", alignItems: "center", fontWeight: "normal", gap: "8px" }}>
+                  <input
+                    type="checkbox"
+                    name="allowNearbyDeparture"
+                    checked={form.allowNearbyDeparture}
+                    onChange={handleChange}
+                  />
+                  Allow nearby airports
+                </label>
+              </div>
 
               <label>Arrival airport</label>
               <div className="airport-wrapper">
@@ -469,11 +490,26 @@ export default function App() {
                         className="airport-item"
                         onClick={() => handleArrivalSelect(airport)}
                       >
-                        <strong>{airport.code}</strong> - {airport.name}, {airport.city}, {airport.country}
+                        {airport.code === "CUSTOM" ? (
+                          <em>Use: "{airport.name}"</em>
+                        ) : (
+                          <><strong>{airport.code}</strong> - {airport.name}, {airport.city}, {airport.country}</>
+                        )}
                       </div>
                     ))}
                   </div>
                 )}
+              </div>
+              <div style={{ marginTop: "8px" }}>
+                <label style={{ display: "flex", alignItems: "center", fontWeight: "normal", gap: "8px" }}>
+                  <input
+                    type="checkbox"
+                    name="allowNearbyArrival"
+                    checked={form.allowNearbyArrival}
+                    onChange={handleChange}
+                  />
+                  Allow nearby airports
+                </label>
               </div>
             </>
           )}

@@ -43,8 +43,8 @@ export default async function handler(req, res) {
       `;
     } else if (enquiry.bookingType === "flights") {
       typeSpecificHtml = `
-        <p><strong>Departure Airport:</strong> ${escapeHtml(enquiry.departureAirport || "")}</p>
-        <p><strong>Arrival Airport:</strong> ${escapeHtml(enquiry.arrivalAirport || "")}</p>
+        <p><strong>Departure Airport:</strong> ${escapeHtml(enquiry.departureAirport || "")}${enquiry.allowNearbyDeparture ? " (nearby airports OK)" : ""}</p>
+        <p><strong>Arrival Airport:</strong> ${escapeHtml(enquiry.arrivalAirport || "")}${enquiry.allowNearbyArrival ? " (nearby airports OK)" : ""}</p>
         ${roomDetailsHtml}
         <p><strong>Dates:</strong> ${escapeHtml(enquiry.dateFrom || "")} to ${escapeHtml(enquiry.dateTo || "")}</p>
         <p><strong>Nights:</strong> ${enquiry.nights || ""}</p>
