@@ -284,7 +284,7 @@ export default function App() {
       });
 
       if (res.ok) {
-        setModal("Thank you — your enquiry has been sent.");
+        setModal("We will get back to you as soon as possible 😊");
         setForm({
           bookingType: "",
           name: "",
